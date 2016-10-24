@@ -3,3 +3,5 @@
 ################################################################################
 
 /TinyRaster/TinyRaster.VC.VC.opendb
+/TinyRaster/Debug/*
+/TinyRaster/x64/*
