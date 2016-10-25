@@ -21,7 +21,7 @@ namespace AssignmentTests
 	const static Colour4 YELLOW = { 1.0f, 1.0f, 0.0f, 1.0f };
 	const static Colour4 ORANGE = { 1.0f, 0.65f, 0.0f, .8f };
 	const static Colour4 CYAN = { 0.0f, 1.0f, 1.0f, 1.0f };
-	const static Colour4 PURPLE = { 1.0f, 0.0f, 1.0f, 1.0f};
+	const static Colour4 PURPLE = { 1.0f, 0.0f, 1.0f, 1.0f };
 	const static Colour4 OLIVEGRN = { 0.43f, 0.56f, 0.24f, 0.3f };
 	const static Colour4 LIGHTGRAY = { 0.8f, 0.8f, 0.8f, 0.95f };
 
@@ -38,7 +38,7 @@ namespace AssignmentTests
 
 		{ PURPLE, Vector2(681, 701) },
 		{ PURPLE, Vector2(605, 22) },
-		
+
 		{ BLUE, Vector2(1057, 5) },
 		{ BLUE, Vector2(710, 715) },
 
@@ -47,7 +47,7 @@ namespace AssignmentTests
 
 		{ CYAN, Vector2(1094, 616) },
 		{ CYAN, Vector2(80, 267) },
-			
+
 		{ ORANGE, Vector2(100, 597) },
 		{ ORANGE, Vector2(1212, 329)}
 	};
@@ -148,14 +148,14 @@ namespace AssignmentTests
 	};
 
 	static Vertex2d grad_pentagon[] = {
-		{ OLIVEGRN, Vector2{ 1097, 290 } },
-		{ WHITE, Vector2{ 900, 440 } },
-		{ BLUE, Vector2{ 975, 690 } },
-		{ CYAN, Vector2{ 1220, 690 } },
-		{ PURPLE, Vector2{ 1300, 440 } }
+		{ OLIVEGRN, Vector2{ 1097 , 290 } },
+		{ WHITE, Vector2{ 900 , 440 } },
+		{ BLUE, Vector2{ 975 , 690 } },
+		{ CYAN, Vector2{ 1220 , 690 } },
+		{ PURPLE, Vector2{ 1300 , 440 } }
 	};
-	
-	static Circle2D circles[] = { 
+
+	static Circle2D circles[] = {
 		{ BLUE, Vector2(307,210), 140 },
 		{ RED, Vector2(491,420), 200 },
 		{ GREEN, Vector2(736,250), 170 },

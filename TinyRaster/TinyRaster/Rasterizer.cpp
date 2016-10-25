@@ -229,10 +229,10 @@ void Rasterizer::DrawLine2D(const Vertex2d & v1, const Vertex2d & v2, int thickn
 	int x = (int)pt1[0];
 	int	dx = pt2[0] - pt1[0];
 	int dy = abs(pt2[1] - pt1[1]);
-	float error = dx;
+	int error = dx;
 	int ystep = (pt1[1] < pt2[1]) ? 1 : -1;
 	int MaxX = (int)pt2[0];
-	float intery = y + (dy / dx);
+	//float intery = y + (dy / dx);
 	if (MaxX > 10000) {
 		std::cout << "Line TOO big" << std::endl;
 		return;
@@ -263,12 +263,12 @@ void Rasterizer::DrawLine2D(const Vertex2d & v1, const Vertex2d & v2, int thickn
 		Colour4 current = GetColourAtPoint(curx, y);
 		//fpart = x - floor(x)
 		float a = 0;
-		if (curx < 0) {
+		/*if (curx < 0) {
 			a = 1.0 - (intery - std::floor(intery));
 		}
 		else {
 			a = (intery - std::floor(intery));
-		}
+		}*/
 		if (Swap_xy)
 		{
 		//	SetFGColour(MultiplyAlpha(colour, current, (1.0 - a)));
@@ -288,7 +288,7 @@ void Rasterizer::DrawLine2D(const Vertex2d & v1, const Vertex2d & v2, int thickn
 			DrawPoint2D(curx, y - 1, thickness);*/
 
 		}
-		intery += dy / dx;
+	//	intery += dy / dx;
 		error -= dy;
 		if (2 * error < 0)
 		{
@@ -357,7 +357,7 @@ void Rasterizer::ScanlineFillPolygon2D(const Vertex2d * vertices, int count)
 	//Use Test 4 (Press F4) to test your solution, this is a simple test case as all polygons are convex.
 	//Use Test 5 (Press F5) to test your solution, this is a complex test case with one non-convex polygon.
 	std::vector<Edge> GlobalEdge;
-	int ymax = 1000;
+	int ymax = 10;
 	int ymin = 0;
 	//Find Ymin and Ymax
 	//this loop creates our edge table from the vertice list given to the function
@@ -379,6 +379,7 @@ void Rasterizer::ScanlineFillPolygon2D(const Vertex2d * vertices, int count)
 		nedge.m = (float)((vertices + i + 1)->position[1] - (vertices + i)->position[1]) / (float)((vertices + i + 1)->position[0] - (vertices + i)->position[0]);//DY / DX
 		GlobalEdge.push_back(nedge);
 	}
+	//find the ymax and ymin of the geomertry
 	for (int i = 0; i < count; i++) {
 		if ((vertices + i)->position[1] > ymax) {
 			ymax = (int)(vertices + i)->position[1];
@@ -431,14 +432,14 @@ void Rasterizer::ScanlineFillPolygon2D(const Vertex2d * vertices, int count)
 					//we are the being handled by the smaller vert?
 					//the edge is not horizontal
 					GlobalEdge[i].Curx = GlobalEdge[i].pos1[0];
-					Cutpointlist.push_back(GlobalEdge[i].pos1[0]);
+					//Cutpointlist.push_back(GlobalEdge[i].pos1[0]);
 				}
 			}
 			//we hit the bigger vertex
 			if (scanline == GlobalEdge[i].pos2[1]) {
 				//we hit a vertex add a cut point
-				GlobalEdge[i].Curx = GlobalEdge[i].pos1[0];
-				Cutpointlist.push_back(GlobalEdge[i].pos1[0]);
+				GlobalEdge[i].Curx = GlobalEdge[i].pos2[0];
+				Cutpointlist.push_back((int)GlobalEdge[i].Curx);
 			}
 			//we are within a line
 			if (scanline > GlobalEdge[i].pos1[1] && scanline < GlobalEdge[i].pos2[1]) {
@@ -456,7 +457,6 @@ void Rasterizer::ScanlineFillPolygon2D(const Vertex2d * vertices, int count)
 					float t2 = Cutpointlist[l];
 					Cutpointlist.erase(std::remove(Cutpointlist.begin(), Cutpointlist.end(), Cutpointlist[k]), Cutpointlist.end());
 					printf("Removing duplicate x point %f and %f\n", t, t2);
-
 				}
 			}
 		}
@@ -511,7 +511,7 @@ typedef struct vedge {
 void Rasterizer::ScanlineInterpolatedFillPolygon2D(const Vertex2d * vertices, int count)
 {
 	std::vector<ColorEdge> GlobalEdge;
-	int ymax = 1000;
+	int ymax = 10;
 	int ymin = 0;
 	//Find Ymin and Ymax
 	for (int i = 0; i < count - 1; i++) {
@@ -582,6 +582,9 @@ void Rasterizer::ScanlineInterpolatedFillPolygon2D(const Vertex2d * vertices, in
 	std::vector<ScanlineLUTItem> Cutpointlist;
 	//lets get scaning!
 	for (int scanline = ymin; scanline <= ymax; scanline++) {
+		if (scanline == ymax) {
+			printf(" ");
+		}
 		Cutpointlist.clear();//clear cut points for this run		
 		for (int i = 0; i < GlobalEdge.size(); i++) {
 			// here the scanline intersects the smaller position in the edge
@@ -597,22 +600,22 @@ void Rasterizer::ScanlineInterpolatedFillPolygon2D(const Vertex2d * vertices, in
 					Cutpointlist.push_back(lut);
 				}
 				else
-				{//we are the being handled by the sm,aller vert?
+				{//we are the being handled by the smaller vert?
 				 //the edge is not horizontal
 					GlobalEdge[i].Curx = GlobalEdge[i].pos1[0];
-					ScanlineLUTItem lut;
+					/*ScanlineLUTItem lut;
 					lut.pos_x = GlobalEdge[i].pos1[0];
 					lut.colour = GlobalEdge[i].vert1.colour;
-					lut.uv = Vector2(GlobalEdge[i].pos1[0], scanline);
-					Cutpointlist.push_back(lut);
+					lut.uv = Vector2(GlobalEdge[i].pos1[0], scanline);*/
+					//Cutpointlist.push_back(lut);
 				}
 			}
 			//we hit the bigger vertex
 			if (scanline == GlobalEdge[i].pos2[1]) {
 				//we hit a vertex add a cut point
-				GlobalEdge[i].Curx = GlobalEdge[i].pos1[0];
+				GlobalEdge[i].Curx = GlobalEdge[i].pos2[0];
 				ScanlineLUTItem lut;
-				lut.pos_x = GlobalEdge[i].pos1[0];
+				lut.pos_x = (int)GlobalEdge[i].Curx;
 				lut.colour = GlobalEdge[i].vert2.colour;
 				lut.uv = Vector2(GlobalEdge[i].pos1[0], scanline);
 				Cutpointlist.push_back(lut);
@@ -625,9 +628,8 @@ void Rasterizer::ScanlineInterpolatedFillPolygon2D(const Vertex2d * vertices, in
 				GlobalEdge[i].Curx += (float)(1.0f / (float)GlobalEdge[i].m);
 				ScanlineLUTItem lut;
 				lut.pos_x = (int)GlobalEdge[i].Curx;
-
 				Vector2 curpos(lut.pos_x, scanline);
-				float t = (GlobalEdge[i].pos1 - curpos).Norm() / (GlobalEdge[i].pos1 - GlobalEdge[i].pos2).Norm();
+				float t = (float)(GlobalEdge[i].pos1 - curpos).Norm() / (float)(GlobalEdge[i].pos1 - GlobalEdge[i].pos2).Norm();
 				lut.colour = GlobalEdge[i].vert1.colour * (1 - t) + (GlobalEdge[i].vert2.colour) *t;
 				lut.uv = curpos;
 				Cutpointlist.push_back(lut);
@@ -641,6 +643,7 @@ void Rasterizer::ScanlineInterpolatedFillPolygon2D(const Vertex2d * vertices, in
 			for (int i = 0; i < Cutpointlist.size() - 1; i++) {
 				if (Cutpointlist[i].pos_x > Cutpointlist[i + 1].pos_x) {
 					temp.pos_x = Cutpointlist[i].pos_x;
+					temp.colour = Cutpointlist[i].colour;
 					Cutpointlist[i] = Cutpointlist[i + 1];
 					Cutpointlist[i + 1] = temp;
 				}
@@ -654,7 +657,7 @@ void Rasterizer::ScanlineInterpolatedFillPolygon2D(const Vertex2d * vertices, in
 			listErrorCover--;
 			printf("Cutpointlist ERROR\n");
 		}
-		for (int i = 0; i < listErrorCover - 1; i++) {
+		for (int i = 0; i < listErrorCover; i+=2) {
 			ScanlineLUTItem p0 = Cutpointlist[i];
 			ScanlineLUTItem p1 = Cutpointlist[i + 1];
 			//if (p1.pos_x = p0.pos_x > 1) //check this line
@@ -662,8 +665,8 @@ void Rasterizer::ScanlineInterpolatedFillPolygon2D(const Vertex2d * vertices, in
 			for (int x = p0.pos_x; x <= p1.pos_x; x++) {
 				Colour4 color;
 				if (mFillMode == FillMode::INTERPOLATED_FILLED) {
-					float deltax = p1.pos_x - p0.pos_x;
-					float t = (x - p0.pos_x) / deltax;
+					float deltax = (float)p1.pos_x - (float)p0.pos_x;
+					float t = (float)(x - p0.pos_x) / (float)deltax;
 					color = p0.colour*(1.0 - t) + p1.colour*t;
 					SetFGColour(color);
 				}
@@ -675,6 +678,7 @@ void Rasterizer::ScanlineInterpolatedFillPolygon2D(const Vertex2d * vertices, in
 					//color = mTexture->GetTexel(x, scanline);
 					SetFGColour(color);
 				}
+
 				DrawPoint2D(x, scanline, 1);
 			}
 			//todo: exact same for UV's!

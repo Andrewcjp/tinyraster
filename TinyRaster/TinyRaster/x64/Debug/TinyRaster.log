@@ -1,36 +1,3 @@
-﻿  Rasterizer.cpp
-c:\users\aandr\dropbox\uni\year2\tinyraster\tinyraster\rasterizer.cpp(72): warning C4554: '|': check operator precedence for possible error; use parentheses to clarify precedence
-c:\users\aandr\dropbox\uni\year2\tinyraster\tinyraster\rasterizer.cpp(92): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
-c:\users\aandr\dropbox\uni\year2\tinyraster\tinyraster\rasterizer.cpp(95): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
-c:\users\aandr\dropbox\uni\year2\tinyraster\tinyraster\rasterizer.cpp(215): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
-c:\users\aandr\dropbox\uni\year2\tinyraster\tinyraster\rasterizer.cpp(216): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
-c:\users\aandr\dropbox\uni\year2\tinyraster\tinyraster\rasterizer.cpp(230): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
-c:\users\aandr\dropbox\uni\year2\tinyraster\tinyraster\rasterizer.cpp(231): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
-c:\users\aandr\dropbox\uni\year2\tinyraster\tinyraster\rasterizer.cpp(250): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
-c:\users\aandr\dropbox\uni\year2\tinyraster\tinyraster\rasterizer.cpp(406): warning C4244: 'argument': conversion from 'float' to 'const int', possible loss of data
-c:\users\aandr\dropbox\uni\year2\tinyraster\tinyraster\rasterizer.cpp(413): warning C4244: 'argument': conversion from 'float' to 'const int', possible loss of data
-c:\users\aandr\dropbox\uni\year2\tinyraster\tinyraster\rasterizer.cpp(427): warning C4244: 'initializing': conversion from 'int' to 'float', possible loss of data
-c:\users\aandr\dropbox\uni\year2\tinyraster\tinyraster\rasterizer.cpp(428): warning C4244: 'initializing': conversion from 'int' to 'float', possible loss of data
-c:\users\aandr\dropbox\uni\year2\tinyraster\tinyraster\rasterizer.cpp(451): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
-c:\users\aandr\dropbox\uni\year2\tinyraster\tinyraster\rasterizer.cpp(461): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
-c:\users\aandr\dropbox\uni\year2\tinyraster\tinyraster\rasterizer.cpp(462): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
-c:\users\aandr\dropbox\uni\year2\tinyraster\tinyraster\rasterizer.cpp(576): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
-c:\users\aandr\dropbox\uni\year2\tinyraster\tinyraster\rasterizer.cpp(586): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
-c:\users\aandr\dropbox\uni\year2\tinyraster\tinyraster\rasterizer.cpp(599): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
-c:\users\aandr\dropbox\uni\year2\tinyraster\tinyraster\rasterizer.cpp(622): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
-c:\users\aandr\dropbox\uni\year2\tinyraster\tinyraster\rasterizer.cpp(635): warning C4244: 'initializing': conversion from 'int' to 'float', possible loss of data
-c:\users\aandr\dropbox\uni\year2\tinyraster\tinyraster\rasterizer.cpp(637): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
-c:\users\aandr\dropbox\uni\year2\tinyraster\tinyraster\rasterizer.cpp(641): warning C4244: 'initializing': conversion from 'int' to 'float', possible loss of data
-c:\users\aandr\dropbox\uni\year2\tinyraster\tinyraster\rasterizer.cpp(644): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
-c:\users\aandr\dropbox\uni\year2\tinyraster\tinyraster\rasterizer.cpp(677): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
-c:\users\aandr\dropbox\uni\year2\tinyraster\tinyraster\rasterizer.cpp(678): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
-c:\users\aandr\dropbox\uni\year2\tinyraster\tinyraster\rasterizer.cpp(683): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
-c:\users\aandr\dropbox\uni\year2\tinyraster\tinyraster\rasterizer.cpp(684): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
-c:\users\aandr\dropbox\uni\year2\tinyraster\tinyraster\rasterizer.cpp(685): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
-c:\users\aandr\dropbox\uni\year2\tinyraster\tinyraster\rasterizer.cpp(686): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
-c:\users\aandr\dropbox\uni\year2\tinyraster\tinyraster\rasterizer.cpp(712): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
-c:\users\aandr\dropbox\uni\year2\tinyraster\tinyraster\rasterizer.cpp(723): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
-  AssignmentTests.cpp
-  Generating Code...
-c:\users\aandr\dropbox\uni\year2\tinyraster\tinyraster\rasterizer.cpp(118): warning C4715: 'Rasterizer::GetColourAtPoint': not all control paths return a value
-  TinyRaster.vcxproj -> C:\Users\AANdr\Dropbox\UNI\Year2\TinyRaster\x64\Debug\TinyRaster.exe
+﻿  AssignmentTests.cpp
+  TinyRaster.vcxproj -> T:\Downloads\repo\repo\TinyRaster\x64\Debug\TinyRaster.exe
+  TinyRaster.vcxproj -> T:\Downloads\repo\repo\TinyRaster\x64\Debug\TinyRaster.pdb (Full PDB)
