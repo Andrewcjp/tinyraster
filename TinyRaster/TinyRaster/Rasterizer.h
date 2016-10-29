@@ -112,6 +112,8 @@ public:
 	void DrawPoint2D(const Vector2&, int size = 1);
 
 	void DrawPoint2D(int x, int y, int size);
+
+	void DrawPoint2D(int x, int y);
 	
 	//Method for drawing a 2D line from two given vertices using Bresenham's algorithm
 	//input:	const Vertex2d &v1 --- vertex 1

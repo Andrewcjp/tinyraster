@@ -158,19 +158,31 @@ void Rasterizer::DrawPoint2D(const Vector2& pt, int size)
 	int x = (int)pt[0];
 	int y = (int)pt[1];
 	WriteRGBAToFramebuffer(x, y, mFGColour);
-	for (int i = 0; i < size; i++) {
+	for (int i = 0; i < size - 1; i++) {
+		//try alernating
 		WriteRGBAToFramebuffer(x, y + i, mFGColour);
-		WriteRGBAToFramebuffer(x, y - i, mFGColour);
+		if (size % 2 != 0) {
+			//if even
+			WriteRGBAToFramebuffer(x, y - i, mFGColour);
+		}
 	}
 	//WriteRGBAToFramebuffer(x, y, mFGColour);
 }
 void Rasterizer::DrawPoint2D(int x, int y, int size)
 {
 	WriteRGBAToFramebuffer(x, y, mFGColour);
-	for (int i = 0; i < size; i++) {
+	for (int i = 0; i < size - 1; i++) {
 		WriteRGBAToFramebuffer(x, y + i, mFGColour);
-		WriteRGBAToFramebuffer(x, y - i, mFGColour);
+		if (size % 2 != 0) {
+			//if even
+			WriteRGBAToFramebuffer(x, y - i, mFGColour);
+		}
 	}
+}
+void Rasterizer::DrawPoint2D(int x, int y)
+{
+	WriteRGBAToFramebuffer(x, y, mFGColour);
+
 }
 
 void Rasterizer::DrawLine2D(const Vertex2d & v1, const Vertex2d & v2, int thickness)
@@ -263,32 +275,55 @@ void Rasterizer::DrawLine2D(const Vertex2d & v1, const Vertex2d & v2, int thickn
 		Colour4 current = GetColourAtPoint(curx, y);
 		//fpart = x - floor(x)
 		float a = 0;
-		/*if (curx < 0) {
-			a = 1.0 - (intery - std::floor(intery));
-		}
-		else {
-			a = (intery - std::floor(intery));
-		}*/
+		
 		if (Swap_xy)
 		{
-		//	SetFGColour(MultiplyAlpha(colour, current, (1.0 - a)));
-			DrawPoint2D(y, curx, thickness);
-		/*	SetFGColour(MultiplyAlpha(colour, current, a));
-			DrawPoint2D(y + 1, curx, thickness);
-			SetFGColour(MultiplyAlpha(colour, current, a));
-			DrawPoint2D(y - 1, curx, thickness);*/
+			DrawPoint2D(y, curx);
+			int thicknessi = 0;
+			bool plus = false;
+			bool minus = false;
+			for (int i = 0; i < thickness - 1; i++) {
+				if (plus == false) {
+					plus = true;
+					DrawPoint2D(y + thicknessi, curx);
+				}
+				if (minus == false) {
+					minus = true;
+					DrawPoint2D(y - thicknessi, curx);
+				}
+				if (minus == true && plus == true) {
+					if (thicknessi < thickness) {
+						thicknessi++;
+					}
+					plus = false;
+					minus = false;
+				}
+			}
 		}
 		else
 		{
-		//	SetFGColour(MultiplyAlpha(colour, current, (1 - a)));
-			DrawPoint2D(curx, y, thickness);
-			/*SetFGColour(MultiplyAlpha(colour, current, a));
-			DrawPoint2D(curx, y + 1, thickness);
-			SetFGColour(MultiplyAlpha(colour, current, a));
-			DrawPoint2D(curx, y - 1, thickness);*/
-
+			DrawPoint2D(curx, y);
+			int thicknessi = 0;
+			bool plus = false;
+			bool minus = false;
+			for (int i = 0; i < thickness - 1; i++) {
+				if (plus == false) {
+					plus = true;
+					DrawPoint2D(curx, y + thicknessi);
+				}
+				if (minus == false) {
+					minus = true;
+					DrawPoint2D(curx, y - thicknessi);
+				}
+				if (minus == true && plus == true) {
+					if (thicknessi < thickness) {
+						thicknessi++;
+					}
+					plus = false;
+					minus = false;
+				}
+			}
 		}
-	//	intery += dy / dx;
 		error -= dy;
 		if (2 * error < 0)
 		{
@@ -657,7 +692,7 @@ void Rasterizer::ScanlineInterpolatedFillPolygon2D(const Vertex2d * vertices, in
 			listErrorCover--;
 			printf("Cutpointlist ERROR\n");
 		}
-		for (int i = 0; i < listErrorCover; i+=2) {
+		for (int i = 0; i < listErrorCover; i += 2) {
 			ScanlineLUTItem p0 = Cutpointlist[i];
 			ScanlineLUTItem p1 = Cutpointlist[i + 1];
 			//if (p1.pos_x = p0.pos_x > 1) //check this line
