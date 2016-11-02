@@ -157,16 +157,7 @@ void Rasterizer::DrawPoint2D(const Vector2& pt, int size)
 {
 	int x = (int)pt[0];
 	int y = (int)pt[1];
-	WriteRGBAToFramebuffer(x, y, mFGColour);
-	for (int i = 0; i < size - 1; i++) {
-		//try alernating
-		WriteRGBAToFramebuffer(x, y + i, mFGColour);
-		if (size % 2 != 0) {
-			//if even
-			WriteRGBAToFramebuffer(x, y - i, mFGColour);
-		}
-	}
-	//WriteRGBAToFramebuffer(x, y, mFGColour);
+	WriteRGBAToFramebuffer(x, y, mFGColour);	
 }
 void Rasterizer::DrawPoint2D(int x, int y, int size)
 {
@@ -182,7 +173,6 @@ void Rasterizer::DrawPoint2D(int x, int y, int size)
 void Rasterizer::DrawPoint2D(int x, int y)
 {
 	WriteRGBAToFramebuffer(x, y, mFGColour);
-
 }
 
 void Rasterizer::DrawLine2D(const Vertex2d & v1, const Vertex2d & v2, int thickness)
@@ -210,15 +200,8 @@ void Rasterizer::DrawLine2D(const Vertex2d & v1, const Vertex2d & v2, int thickn
 
 	Vector2 pt1 = v1.position;
 	Vector2 pt2 = v2.position;
-	/*SetFGColour(Colour4(1, 1, 1, 1));
-	DrawPoint2D(mClipRect.left, mClipRect.top, 10);
-	SetFGColour(Colour4(1, 0, 1, 1));
-	DrawPoint2D(mClipRect.right, mClipRect.bottom, 10);
-	SetFGColour(Colour4(1, 1, 1, 1));
-	DrawPoint2D(mClipRect.right, mClipRect.top, 10);
-	SetFGColour(Colour4(1, 0, 1, 1));
-	DrawPoint2D(mClipRect.left, mClipRect.bottom, 10);
-	if (ClipLine(v1, v2, mClipRect, pt1, pt2) == false) {
+
+	/*if (ClipLine(v1, v2, mClipRect, pt1, pt2) == false) {
 		return;
 	}*/
 	//calculate wether our line is very steep
@@ -371,9 +354,6 @@ Colour4 Rasterizer::GetColor(int x, int y, const Vertex2d vert) {
 	}
 	return out;
 }
-
-
-
 typedef struct edge {
 	Vector2 pos1;
 	Vector2 pos2;
@@ -716,26 +696,10 @@ void Rasterizer::ScanlineInterpolatedFillPolygon2D(const Vertex2d * vertices, in
 
 				DrawPoint2D(x, scanline, 1);
 			}
-			//todo: exact same for UV's!
-		//}
+
 		}
 
-	}
-	////Debug Drawing of the global edge table.
-	Colour4 color;
-	color[0] = 1;
-	color[3] = 1;
-	SetFGColour(color);
-	for (int i = 0; i < GlobalEdge.size(); i++) {
-		Vertex2d vert1;
-		Vertex2d vert2;
-		//need to find out whtat vertex to get colour from
-		vert1.position = GlobalEdge[i].pos1;
-		vert1.colour = GlobalEdge[i].vert1.colour;
-		vert2.position = GlobalEdge[i].pos2;
-		vert2.colour = GlobalEdge[i].vert2.colour;
-		//DrawLine2D(vert1, vert2);
-	}
+	}	
 	//TODO:
 	//Ex 2.4 Implement Rasterizer::ScanlineInterpolatedFillPolygon2D method so that it is capable of performing interpolated filling.
 	//Note: mFillMode is set to INTERPOLATED_FILL
@@ -772,7 +736,7 @@ void Rasterizer::DrawCircle2D(const Circle2D & inCircle, bool filled)
 	//Use Test 8 to test your solution
 	std::vector<Vertex2d> verts;
 	float r = inCircle.radius;
-	int nsegment = inCircle.radius * 10;//todo: tune this value?
+	int nsegment = inCircle.radius * 50;//todo: tune this value
 	float t = 0;
 	float dt = 2 * PI / nsegment;
 	while (t < 2 * PI)

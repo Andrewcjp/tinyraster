@@ -183,10 +183,6 @@ void AppWindow::Render()
 		case TEST8:
 			AssignmentTest08(mRasterizer);
 			break;
-		case TEST9:
-			AssignmentTest09(mRasterizer);
-			break;
-
 	}
 
 	Vector2 centre(m_width >> 1, m_height >> 1);
