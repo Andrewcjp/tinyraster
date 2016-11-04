@@ -153,7 +153,6 @@
     <ClInclude Include="Rasterizer.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="TestData.h" />
-    <ClInclude Include="Texture.h" />
     <ClInclude Include="TinyRasterMain.h" />
     <ClInclude Include="TinyRasterTypes.h" />
     <ClInclude Include="Vector2.h" />
@@ -166,7 +165,6 @@
     <ClCompile Include="TestApplication.cpp" />
     <ClCompile Include="AppWindow.cpp" />
     <ClCompile Include="Rasterizer.cpp" />
-    <ClCompile Include="Texture.cpp" />
     <ClCompile Include="TinyRasterMain.cpp" />
     <ClCompile Include="Vector2.cpp" />
     <ClCompile Include="Vector3.cpp" />

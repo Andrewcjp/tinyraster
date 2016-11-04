@@ -19,7 +19,6 @@ typedef struct _ScanlineLUTItem
 {
 	Colour4 colour;			//the colour of an edge pixel
 	int pos_x;				//the x position of an edge along the scanline
-	Vector2 uv;
 } ScanlineLUTItem;
 
 //typedef a scanline as a dynamic array of ScanlineLUTItem
@@ -68,8 +67,6 @@ private:
 	GeometryMode	mGeometryMode;	//current geometry rasterisation mode 
 	FillMode		mFillMode;		//current fill mode
 	BlendMode		mBlendMode;		//current blend mode
-	Texture*			mTexture;
-	bool mEnableAA;
 	Rasterizer(void);				//prevent default constructor from being directly invoked
 
 	//Clear all entries in mScanlineLUT[]
@@ -91,7 +88,7 @@ private:
 	//			int y --- y coordinate of the framebuffer location
 	//			const Colour4& rgba --- the RGBA colour to be written to the framebuffer;
 	void WriteRGBAToFramebuffer(int x, int y, const Colour4& colour);
-
+	//returns the current value of the framebuffer at the provided position
 	Colour4 GetColourAtPoint(int x, int y);
 
 public:
@@ -110,9 +107,7 @@ public:
 	//input:	Vector2& the coordinate of the point
 	//			int size the size of the point to be rasterisation in pixel
 	void DrawPoint2D(const Vector2&, int size = 1);
-
-	void DrawPoint2D(int x, int y, int size);
-
+	//Simplification of above method for ease and speed
 	void DrawPoint2D(int x, int y);
 	
 	//Method for drawing a 2D line from two given vertices using Bresenham's algorithm
@@ -127,10 +122,10 @@ public:
 	void DrawUnfilledPolygon2D(const Vertex2d* vertices, int count);
 
 	Colour4 MultiplyAlpha(Colour4 color, Colour4 background, float alpha);
-
+	//gets the colour of a point 
+	//if not alpha blending returns the colour
+	//else it gets the value in the framebuffer currently and then returns it.
 	Colour4 GetColor(int x, int y, const Vertex2d vert);
-	Colour4 SetAlpha(Colour4 colour, float);
-
 	
 	//Method for drawing solidly filled 2D polygon
 	//input:	const Vertex2d* vertices --- an array of polygon vertices ordered in counterclock-wise
@@ -142,7 +137,8 @@ public:
 	//			int count --- the number of vertices in the array
 	void ScanlineInterpolatedFillPolygon2D(const Vertex2d* vertices, int count);
 
-
+	//Uses boundary fill to draw a solidly filled circle
+	//input: const Circle2D & inCircle-- the circle to draw
 	void BoundaryDrawFilledCircle2D(const Circle2D & inCircle);
 
 	//Method for drawing a 2D circle either filled or unfill based on the value of bool filled
@@ -206,7 +202,3 @@ public:
 		mBlendMode = mode;
 	}
 };
-
-bool Intersects(int ypos, Vertex2d v1, Vertex2d v2);
-
-Colour4 MultiplyAlpha(Colour4 color, Colour4 background, float alpha);

@@ -58,7 +58,6 @@ bool Rasterizer::ClipLine(const Vertex2d & v1, const Vertex2d & v2, const ClipRe
 	//However, if you want to create an efficient and robust rasteriser, clipping is a usefull addition.
 	//The following code is the starting point of the Cohen-Sutherland clipping algorithm.
 	//If you complete its implementation, you can test it by calling prior to calling any DrawLine2D .
-
 	const Vector2 p1 = v1.position;
 	const Vector2 p2 = v2.position;
 	outP1 = p1;
@@ -69,7 +68,7 @@ bool Rasterizer::ClipLine(const Vertex2d & v1, const Vertex2d & v2, const ClipRe
 		int x = 0, y = 0;
 		int outcode = outcode1 ? outcode1 : outcode2;
 
-		if (outcode1 | outcode2 == 0) {
+		if ((outcode1 | outcode2) == 0) {
 			return true;
 		}
 		else if ((outcode1 & outcode2)) {
@@ -89,12 +88,13 @@ bool Rasterizer::ClipLine(const Vertex2d & v1, const Vertex2d & v2, const ClipRe
 			x = clipRect.left;//xmin
 		}
 		if (outcode == outcode1) {
-			outP1[0] = x; outP1[1] = y;
+			outP1[0] = (float)x;
+			outP1[1] = (float)y;
 		}
 		else {
-			outP2[0] = x; outP2[1] = y;
+			outP2[0] = (float)x;
+			outP2[1] = (float)y;
 		}
-
 	}
 	return false;
 }
@@ -114,7 +114,6 @@ Colour4 Rasterizer::GetColourAtPoint(int x, int y) {
 			return pixel[y*mWidth + x];
 		}
 	}
-
 }
 Rasterizer::Rasterizer(int width, int height)
 {
@@ -130,8 +129,6 @@ Rasterizer::Rasterizer(int width, int height)
 	mGeometryMode = LINE;
 	mFillMode = UNFILLED;
 	mBlendMode = NO_BLEND;
-	mTexture = new Texture(width, height);
-	mTexture->LoadTexture("");
 	SetClipRectangle(0, mWidth, 0, mHeight);
 }
 Rasterizer::~Rasterizer()
@@ -159,17 +156,7 @@ void Rasterizer::DrawPoint2D(const Vector2& pt, int size)
 	int y = (int)pt[1];
 	WriteRGBAToFramebuffer(x, y, mFGColour);	
 }
-void Rasterizer::DrawPoint2D(int x, int y, int size)
-{
-	WriteRGBAToFramebuffer(x, y, mFGColour);
-	for (int i = 0; i < size - 1; i++) {
-		WriteRGBAToFramebuffer(x, y + i, mFGColour);
-		if (size % 2 != 0) {
-			//if even
-			WriteRGBAToFramebuffer(x, y - i, mFGColour);
-		}
-	}
-}
+
 void Rasterizer::DrawPoint2D(int x, int y)
 {
 	WriteRGBAToFramebuffer(x, y, mFGColour);
@@ -177,8 +164,6 @@ void Rasterizer::DrawPoint2D(int x, int y)
 
 void Rasterizer::DrawLine2D(const Vertex2d & v1, const Vertex2d & v2, int thickness)
 {
-
-
 	//The following code is basic Bresenham's line drawing algorithm.
 	//The current implementation is only capable of rasterise a line in the first octant, where dy < dx and dy/dx >= 0
 	//See if you want to read ahead https://www.cs.helsinki.fi/group/goa/mallinnus/lines/bresenh.html
@@ -197,18 +182,13 @@ void Rasterizer::DrawLine2D(const Vertex2d & v1, const Vertex2d & v2, int thickn
 	//Note: The variable mFillMode indicates if the fill mode is set to INTERPOLATED_FILL. 
 	//The colour of each point should be linearly interpolated using the colours of v1 and v2.
 	//Use Test 2 (Press F2) to test your implementation
-
 	Vector2 pt1 = v1.position;
 	Vector2 pt2 = v2.position;
-
-	/*if (ClipLine(v1, v2, mClipRect, pt1, pt2) == false) {
-		return;
-	}*/
 	//calculate wether our line is very steep
 	const bool Swap_xy = (abs(pt2[1] - pt1[1]) > abs(pt2[0] - pt1[0]));//dy > dx
 	bool Swap_verts = pt1[0] > pt2[0];
-	Colour4	 Vert1col = GetColor(v1.position[0], v1.position[1], v1);
-	Colour4	 Vert2col = GetColor(v2.position[0], v2.position[1], v2);
+	Colour4	 Vert1col = GetColor((int)v1.position[0], (int)v1.position[1], v1);
+	Colour4	 Vert2col = GetColor((int)v2.position[0], (int)v2.position[1], v2);
 	if (Swap_xy)
 	{
 		std::swap(pt1[0], pt1[1]);
@@ -218,32 +198,27 @@ void Rasterizer::DrawLine2D(const Vertex2d & v1, const Vertex2d & v2, int thickn
 	if (pt1[0] > pt2[0])
 	{
 		std::swap(pt1, pt2);
-		//std::swap(Vert1col, Vert2col);
 	}
 	int y = (int)pt1[1];
 	int x = (int)pt1[0];
-	int	dx = pt2[0] - pt1[0];
-	int dy = abs(pt2[1] - pt1[1]);
+	int	dx = (int)pt2[0] - (int)pt1[0];
+	int dy = (int)abs(pt2[1] - pt1[1]);
 	int error = dx;
 	int ystep = (pt1[1] < pt2[1]) ? 1 : -1;
 	int MaxX = (int)pt2[0];
-	//float intery = y + (dy / dx);
-	if (MaxX > 10000) {
-		std::cout << "Line TOO big" << std::endl;
-		return;
-	}
 	for (int curx = x; curx < MaxX; curx++)
 	{
 		Vert1col = GetColor(curx, y, v1);
 		Vert2col = GetColor(curx, y, v2);
-		//Triple bools selecting each octant that needs colour swaping ( octs 1,2,3 and 8)
+		//Triple bools selecting each octant that needs colour swapping ( octs 1,2,3 and 8)
 		if ((!Swap_verts && !Swap_xy && ystep == 1) || (!Swap_verts && Swap_xy && ystep == 1) || (Swap_verts && Swap_xy && ystep == -1) || (!Swap_verts && !Swap_xy && ystep == -1))
 		{
 			std::swap(Vert1col, Vert2col);
 		}
 		Colour4 colour;
 		if (mFillMode == FillMode::INTERPOLATED_FILLED) {
-			Vector2 curpos(curx, y);
+			Vector2 curpos((float)curx, (float)y);
+			//calculate the position along the line as a percentage (0-1)
 			float t = (pt1 - curpos).Norm() / (pt1 - pt2).Norm();
 			//Full Accurate lerp
 			colour[0] = t * Vert1col[0] + (1 - t) * Vert2col[0];
@@ -256,9 +231,8 @@ void Rasterizer::DrawLine2D(const Vertex2d & v1, const Vertex2d & v2, int thickn
 		}
 		SetFGColour(colour);
 		Colour4 current = GetColourAtPoint(curx, y);
-		//fpart = x - floor(x)
 		float a = 0;
-		
+		//thickness is implemented here as all needed information is at this scope
 		if (Swap_xy)
 		{
 			DrawPoint2D(y, curx);
@@ -315,11 +289,7 @@ void Rasterizer::DrawLine2D(const Vertex2d & v1, const Vertex2d & v2, int thickn
 		}
 	}
 }
-Colour4 Rasterizer::SetAlpha(Colour4 colour, float a)
-{
-	colour[3] = a;
-	return colour;
-}
+
 void Rasterizer::DrawUnfilledPolygon2D(const Vertex2d * vertices, int count)
 {
 	//TODO:
@@ -354,13 +324,12 @@ Colour4 Rasterizer::GetColor(int x, int y, const Vertex2d vert) {
 	}
 	return out;
 }
+//this struct defines an edge
 typedef struct edge {
 	Vector2 pos1;
 	Vector2 pos2;
 	float m;
 	float Curx;
-	float ymin;
-	float ymax;
 }Edge;
 void Rasterizer::ScanlineFillPolygon2D(const Vertex2d * vertices, int count)
 {
@@ -371,6 +340,7 @@ void Rasterizer::ScanlineFillPolygon2D(const Vertex2d * vertices, int count)
 	//
 	//Use Test 4 (Press F4) to test your solution, this is a simple test case as all polygons are convex.
 	//Use Test 5 (Press F5) to test your solution, this is a complex test case with one non-convex polygon.
+	//List of all the edges in this polygon
 	std::vector<Edge> GlobalEdge;
 	int ymax = 10;
 	int ymin = 0;
@@ -380,31 +350,17 @@ void Rasterizer::ScanlineFillPolygon2D(const Vertex2d * vertices, int count)
 		Edge nedge;
 		if ((vertices + i)->position[1] < (vertices + i + 1)->position[1]) {
 			nedge.pos1 = (vertices + i)->position;
-			nedge.ymin = (vertices + i)->position[1];
-			nedge.ymax = (vertices + i + 1)->position[1];
 			nedge.pos2 = (vertices + i + 1)->position;
 		}
 		else
 		{
-			nedge.ymax = (vertices + i)->position[1];
-			nedge.ymin = (vertices + i + 1)->position[1];
 			nedge.pos2 = (vertices + i)->position;
 			nedge.pos1 = (vertices + i + 1)->position;
 		}
 		nedge.m = (float)((vertices + i + 1)->position[1] - (vertices + i)->position[1]) / (float)((vertices + i + 1)->position[0] - (vertices + i)->position[0]);//DY / DX
 		GlobalEdge.push_back(nedge);
-	}
-	//find the ymax and ymin of the geomertry
-	for (int i = 0; i < count; i++) {
-		if ((vertices + i)->position[1] > ymax) {
-			ymax = (int)(vertices + i)->position[1];
-		}
-		if ((vertices + i)->position[1] < ymin) {
-			ymin = (int)(vertices + i)->position[1];
-		}
-	}
-	//add last one to the first
-	//this creates an edge entry from the last vertice to the first vertice.
+	}	
+	//this creates an edge entry from the last vertex to the first vertex.
 	int lasti = count - 1;
 	Edge nedge;
 	if ((vertices + lasti)->position[1] < (vertices)->position[1]) {
@@ -418,6 +374,17 @@ void Rasterizer::ScanlineFillPolygon2D(const Vertex2d * vertices, int count)
 	}
 	nedge.m = (float)((vertices + lasti)->position[1] - (vertices)->position[1]) / (float)((vertices + lasti)->position[0] - (vertices)->position[0]);//DY / DX
 	GlobalEdge.push_back(nedge);
+
+	//find the ymax and ymin of the geomertry
+	for (int i = 0; i < count; i++) {
+		if ((vertices + i)->position[1] > ymax) {
+			ymax = (int)(vertices + i)->position[1];
+		}
+		if ((vertices + i)->position[1] < ymin) {
+			ymin = (int)(vertices + i)->position[1];
+		}
+	}
+
 	//sort all edges by y coord
 	Edge temp;
 	for (int j = 0; j < GlobalEdge.size() - 1; j++) {
@@ -444,10 +411,9 @@ void Rasterizer::ScanlineFillPolygon2D(const Vertex2d * vertices, int count)
 				}
 				else
 				{
-					//we are the being handled by the smaller vert?
+					//we are the being handled by the smaller vert
 					//the edge is not horizontal
 					GlobalEdge[i].Curx = GlobalEdge[i].pos1[0];
-					//Cutpointlist.push_back(GlobalEdge[i].pos1[0]);
 				}
 			}
 			//we hit the bigger vertex
@@ -464,20 +430,19 @@ void Rasterizer::ScanlineFillPolygon2D(const Vertex2d * vertices, int count)
 				Cutpointlist.push_back((int)GlobalEdge[i].Curx);
 			}
 		}
-
+		//for speed:
+		//this loop removes any duplicate points generated 
 		for (int l = 0; l < Cutpointlist.size(); l++) {
 			for (int k = 0; k < Cutpointlist.size(); k++) {
 				if (k != l && Cutpointlist[k] == Cutpointlist[l]) {
-					float t = Cutpointlist[k];
-					float t2 = Cutpointlist[l];
+					int t = Cutpointlist[k];
+					int t2 = Cutpointlist[l];
 					Cutpointlist.erase(std::remove(Cutpointlist.begin(), Cutpointlist.end(), Cutpointlist[k]), Cutpointlist.end());
-					printf("Removing duplicate x point %f and %f\n", t, t2);
 				}
 			}
 		}
 
-		//Now we sort the list to ge accending x coords
-		//aww simple little bubble sort
+		//Now we sort the list to get accending x coords
 		int temp;
 		for (int j = 0; j < Cutpointlist.size(); j++) {
 			for (int i = 0; i < Cutpointlist.size() - 1; i++) {
@@ -489,20 +454,15 @@ void Rasterizer::ScanlineFillPolygon2D(const Vertex2d * vertices, int count)
 			}
 		}
 
-		Vertex2d vert = *vertices;
-		///this value Is a Error catch to prevent the cutpoint drawing loop from failing
-		int listErrorCover = Cutpointlist.size();
-		if (Cutpointlist.size() % 2 != 0) {
-			listErrorCover--;
-			//	std::cout << "Major Issue shouldn't happen\n";
-		}
-		for (int i = 0; i < listErrorCover; i += 2) {
+		Vertex2d vert = *vertices;	
+		//we draw out the lines between our cutpoint pairs
+		for (int i = 0; i < Cutpointlist.size(); i += 2) {
 			Vertex2d vert1;
 			Vertex2d vert2;
 			vert1.colour = vert.colour;
 			vert2.colour = vert.colour;
-			vert1.position = Vector2(Cutpointlist[i], scanline);
-			vert2.position = Vector2(Cutpointlist[i + 1], scanline);
+			vert1.position = Vector2((float)Cutpointlist[i], (float)scanline);
+			vert2.position = Vector2((float)Cutpointlist[i + 1], (float)scanline);
 			DrawLine2D(vert1, vert2);
 		}
 	}
@@ -512,16 +472,14 @@ void Rasterizer::ScanlineFillPolygon2D(const Vertex2d * vertices, int count)
 	//Use Test 6 (Press F6) to test your solution
 
 }
-
-typedef struct vedge {
+//this struct defines an edge and its colour
+typedef struct coloredge {
 	Vector2 pos1;
 	Vector2 pos2;
 	Vertex2d vert1;
 	Vertex2d vert2;
 	float m;//Gradent of the line
 	float Curx;//current x incremented by 1/m
-	float ymin;
-	float ymax;
 }ColorEdge;
 void Rasterizer::ScanlineInterpolatedFillPolygon2D(const Vertex2d * vertices, int count)
 {
@@ -534,16 +492,11 @@ void Rasterizer::ScanlineInterpolatedFillPolygon2D(const Vertex2d * vertices, in
 		if ((vertices + i)->position[1] < (vertices + i + 1)->position[1]) {
 			nedge.pos1 = (vertices + i)->position;
 			nedge.pos2 = (vertices + i + 1)->position;
-			nedge.ymin = (vertices + i)->position[1];
-			nedge.ymax = (vertices + i + 1)->position[1];
-
 			nedge.vert1 = *(vertices + i);
 			nedge.vert2 = *(vertices + i + 1);
 		}
 		else
 		{
-			nedge.ymax = (vertices + i)->position[1];
-			nedge.ymin = (vertices + i + 1)->position[1];
 			nedge.pos2 = (vertices + i)->position;
 			nedge.pos1 = (vertices + i + 1)->position;
 			nedge.vert2 = *(vertices + i);
@@ -552,16 +505,8 @@ void Rasterizer::ScanlineInterpolatedFillPolygon2D(const Vertex2d * vertices, in
 		nedge.m = (float)((vertices + i + 1)->position[1] - (vertices + i)->position[1]) / (float)((vertices + i + 1)->position[0] - (vertices + i)->position[0]);//DY / DX
 		GlobalEdge.push_back(nedge);
 
-	}
-	for (int i = 0; i < count; i++) {
-		if ((vertices + i)->position[1] > ymax) {
-			ymax = (int)(vertices + i)->position[1];
-		}
-		if ((vertices + i)->position[1] < ymin) {
-			ymin = (int)(vertices + i)->position[1];
-		}
-	}
-	//add last one to the first
+	}	
+	//join the last vertex to the first one
 	int lasti = count - 1;
 	ColorEdge nedge;
 	if ((vertices + lasti)->position[1] < (vertices)->position[1]) {
@@ -579,7 +524,15 @@ void Rasterizer::ScanlineInterpolatedFillPolygon2D(const Vertex2d * vertices, in
 	}
 	nedge.m = (float)((vertices + lasti)->position[1] - (vertices)->position[1]) / (float)((vertices + lasti)->position[0] - (vertices)->position[0]);//DY / DX
 	GlobalEdge.push_back(nedge);
-
+	//finds the ymax and ymin of the polygon
+	for (int i = 0; i < count; i++) {
+		if ((vertices + i)->position[1] > ymax) {
+			ymax = (int)(vertices + i)->position[1];
+		}
+		if ((vertices + i)->position[1] < ymin) {
+			ymin = (int)(vertices + i)->position[1];
+		}
+	}
 
 	//sort all edges by y coord
 	ColorEdge temp;
@@ -593,13 +546,9 @@ void Rasterizer::ScanlineInterpolatedFillPolygon2D(const Vertex2d * vertices, in
 		}
 	}
 
-
 	std::vector<ScanlineLUTItem> Cutpointlist;
 	//lets get scaning!
 	for (int scanline = ymin; scanline <= ymax; scanline++) {
-		if (scanline == ymax) {
-			printf(" ");
-		}
 		Cutpointlist.clear();//clear cut points for this run		
 		for (int i = 0; i < GlobalEdge.size(); i++) {
 			// here the scanline intersects the smaller position in the edge
@@ -615,14 +564,10 @@ void Rasterizer::ScanlineInterpolatedFillPolygon2D(const Vertex2d * vertices, in
 					Cutpointlist.push_back(lut);
 				}
 				else
-				{//we are the being handled by the smaller vert?
-				 //the edge is not horizontal
+				{
+					//we are the being handled by the smaller vert				
+					//the edge is not horizontal
 					GlobalEdge[i].Curx = GlobalEdge[i].pos1[0];
-					/*ScanlineLUTItem lut;
-					lut.pos_x = GlobalEdge[i].pos1[0];
-					lut.colour = GlobalEdge[i].vert1.colour;
-					lut.uv = Vector2(GlobalEdge[i].pos1[0], scanline);*/
-					//Cutpointlist.push_back(lut);
 				}
 			}
 			//we hit the bigger vertex
@@ -632,21 +577,18 @@ void Rasterizer::ScanlineInterpolatedFillPolygon2D(const Vertex2d * vertices, in
 				ScanlineLUTItem lut;
 				lut.pos_x = (int)GlobalEdge[i].Curx;
 				lut.colour = GlobalEdge[i].vert2.colour;
-				lut.uv = Vector2(GlobalEdge[i].pos1[0], scanline);
 				Cutpointlist.push_back(lut);
 			}
 			//we are within a line
 			if (scanline > GlobalEdge[i].pos1[1] && scanline < GlobalEdge[i].pos2[1]) {
 				//we have intersected with a line so add a cutpoint.
 				//increment the Curx
-
 				GlobalEdge[i].Curx += (float)(1.0f / (float)GlobalEdge[i].m);
 				ScanlineLUTItem lut;
 				lut.pos_x = (int)GlobalEdge[i].Curx;
-				Vector2 curpos(lut.pos_x, scanline);
+				Vector2 curpos((float)lut.pos_x, (float)scanline);
 				float t = (float)(GlobalEdge[i].pos1 - curpos).Norm() / (float)(GlobalEdge[i].pos1 - GlobalEdge[i].pos2).Norm();
 				lut.colour = GlobalEdge[i].vert1.colour * (1 - t) + (GlobalEdge[i].vert2.colour) *t;
-				lut.uv = curpos;
 				Cutpointlist.push_back(lut);
 			}
 		}
@@ -666,39 +608,22 @@ void Rasterizer::ScanlineInterpolatedFillPolygon2D(const Vertex2d * vertices, in
 		}
 
 		Vertex2d vert = *vertices;
-		///this value Is a Error catch to prevent the cutpoint drawing loop from failing
-		int listErrorCover = Cutpointlist.size();
-		if (Cutpointlist.size() % 2 != 0) {
-			listErrorCover--;
-			printf("Cutpointlist ERROR\n");
-		}
-		for (int i = 0; i < listErrorCover; i += 2) {
+		for (int i = 0; i < Cutpointlist.size(); i += 2) {
 			ScanlineLUTItem p0 = Cutpointlist[i];
 			ScanlineLUTItem p1 = Cutpointlist[i + 1];
-			//if (p1.pos_x = p0.pos_x > 1) //check this line
-			//{
+			//draw our hoizontal line LERPing colour across it
 			for (int x = p0.pos_x; x <= p1.pos_x; x++) {
 				Colour4 color;
+			
 				if (mFillMode == FillMode::INTERPOLATED_FILLED) {
 					float deltax = (float)p1.pos_x - (float)p0.pos_x;
 					float t = (float)(x - p0.pos_x) / (float)deltax;
-					color = p0.colour*(1.0 - t) + p1.colour*t;
+					color = p0.colour*(1.0f - t) + p1.colour*t;
 					SetFGColour(color);
 				}
-				else if (mFillMode == FillMode::TEXTURED) {
-					float deltax = p1.pos_x - p0.pos_x;
-					float t = (x - p0.pos_x) / deltax;
-					//need to process uvs in LUT.
-					Vector2 uv = p0.uv*(1.0 - t) + p1.uv*t;
-					//color = mTexture->GetTexel(x, scanline);
-					SetFGColour(color);
-				}
-
-				DrawPoint2D(x, scanline, 1);
+				DrawPoint2D(x, scanline);
 			}
-
 		}
-
 	}	
 	//TODO:
 	//Ex 2.4 Implement Rasterizer::ScanlineInterpolatedFillPolygon2D method so that it is capable of performing interpolated filling.
@@ -706,24 +631,26 @@ void Rasterizer::ScanlineInterpolatedFillPolygon2D(const Vertex2d * vertices, in
 	//		This exercise will be more straightfoward if Ex 1.3 has been implemented in DrawLine2D
 	//Use Test 7 to test your solution
 }
-int inline inCircleN(int x, int y, float radius, Vector2 origin) {  // 21.3, 21.1, 21.5
-	int dx = abs(x - origin[0]);
-	int dy = abs(y - origin[1]);
+// this function checks if a point is within a circle
+int inline inCircleN(int x, int y, float radius, Vector2 origin) { 
+	int dx = (int)abs(x - origin[0]);
+	int dy = (int)abs(y - origin[1]);
 	return (dx * dx + dy * dy <= radius*radius);
 }
 void Rasterizer::BoundaryDrawFilledCircle2D(const Circle2D & inCircle) {
-	//need to check each px;
-	int ymax = inCircle.centre[1] + inCircle.radius;
-	int ymin = inCircle.centre[1] - inCircle.radius;
-	int xmax = inCircle.centre[0] + inCircle.radius;
-	int xmin = inCircle.centre[0] - inCircle.radius;
-	//xmin and xmax
+	//find the bounds of our circle
+	int ymax = (int)(inCircle.centre[1] + inCircle.radius);
+	int ymin = (int)(inCircle.centre[1] - inCircle.radius);
+	int xmax = (int)(inCircle.centre[0] + inCircle.radius);
+	int xmin = (int)(inCircle.centre[0] - inCircle.radius);
+	//loop though each point in our bounds and check if they are within the circle
 	for (int y = ymin; y < ymax; y++) {
 		for (int x = xmin; x < xmax; x++) {
 			//check this point is within circle;
 			if (inCircleN(x, y, inCircle.radius, inCircle.centre)) {
+				//this point is inside the circle so we should draw
 				SetFGColour(inCircle.colour);
-				DrawPoint2D(x, y, 1);
+				DrawPoint2D(x, y);
 			}
 		}
 	}
@@ -733,25 +660,28 @@ void Rasterizer::DrawCircle2D(const Circle2D & inCircle, bool filled)
 	//TODO:
 	//Ex 2.5 Implement Rasterizer::DrawCircle2D method so that it can draw a filled circle.
 	//Note: For a simple solution, you can first attempt to draw an unfilled circle in the same way as drawing an unfilled polygon.
-	//Use Test 8 to test your solution
-	std::vector<Vertex2d> verts;
-	float r = inCircle.radius;
-	int nsegment = inCircle.radius * 50;//todo: tune this value
-	float t = 0;
-	float dt = 2 * PI / nsegment;
-	while (t < 2 * PI)
-	{
-		Vertex2d vert1;
-		vert1.colour = inCircle.colour;
-		vert1.position = Vector2(r*cos(t - dt) + inCircle.centre[0], r*sin(t - dt) + inCircle.centre[1]);
-		verts.push_back(vert1);
-		t += dt;
-	}
-	Vertex2d* a = &verts[0];
+	//Use Test 8 to test your solution	
 	if (filled == false) {
-		DrawUnfilledPolygon2D(a, verts.size());
+		//generate vertexs for our circle
+		std::vector<Vertex2d> verts;//list of generated vertexes
+		float r = inCircle.radius;
+		int nsegment = (int)(inCircle.radius * 50);
+		float t = 0;
+		float dt = 2.0f * (float)PI / nsegment;
+		while (t < 2 * PI)
+		{
+			Vertex2d vert1;
+			vert1.colour = inCircle.colour;
+			vert1.position = Vector2(r*cos(t - dt) + inCircle.centre[0], r*sin(t - dt) + inCircle.centre[1]);
+			verts.push_back(vert1);
+			t += dt;
+		}
+		Vertex2d* a = &verts[0];
+		//we draw out our polygon
+		DrawUnfilledPolygon2D(a, (int)verts.size());
 	}
-	else {
+	else 
+	{
 		BoundaryDrawFilledCircle2D(inCircle);
 	}
 }
