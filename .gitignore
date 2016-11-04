@@ -7,5 +7,6 @@
 /TinyRaster/x64/*
 /TinyRaster/ExampleSolution/*
 /TinyRaster/TinyRaster/x64/*
-/TinyRaster/TinyRaster/x64/*
-/TinyRaster/TinyRaster/x64/*
+/TinyRaster/TinyRaster/x64/debug/*
+/TinyRaster/TinyRaster/x64/release/*
+

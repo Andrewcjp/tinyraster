@@ -154,7 +154,7 @@ void Rasterizer::DrawPoint2D(const Vector2& pt, int size)
 {
 	int x = (int)pt[0];
 	int y = (int)pt[1];
-	WriteRGBAToFramebuffer(x, y, mFGColour);	
+	WriteRGBAToFramebuffer(x, y, mFGColour);
 }
 
 void Rasterizer::DrawPoint2D(int x, int y)
@@ -359,7 +359,7 @@ void Rasterizer::ScanlineFillPolygon2D(const Vertex2d * vertices, int count)
 		}
 		nedge.m = (float)((vertices + i + 1)->position[1] - (vertices + i)->position[1]) / (float)((vertices + i + 1)->position[0] - (vertices + i)->position[0]);//DY / DX
 		GlobalEdge.push_back(nedge);
-	}	
+	}
 	//this creates an edge entry from the last vertex to the first vertex.
 	int lasti = count - 1;
 	Edge nedge;
@@ -435,8 +435,8 @@ void Rasterizer::ScanlineFillPolygon2D(const Vertex2d * vertices, int count)
 		for (int l = 0; l < Cutpointlist.size(); l++) {
 			for (int k = 0; k < Cutpointlist.size(); k++) {
 				if (k != l && Cutpointlist[k] == Cutpointlist[l]) {
-					int t = Cutpointlist[k];
-					int t2 = Cutpointlist[l];
+					float t = Cutpointlist[k];
+					float t2 = Cutpointlist[l];
 					Cutpointlist.erase(std::remove(Cutpointlist.begin(), Cutpointlist.end(), Cutpointlist[k]), Cutpointlist.end());
 				}
 			}
@@ -453,10 +453,14 @@ void Rasterizer::ScanlineFillPolygon2D(const Vertex2d * vertices, int count)
 				}
 			}
 		}
-
-		Vertex2d vert = *vertices;	
+		int listErrorCover = Cutpointlist.size();
+		// the cupoint list only has even pairs in it
+		if (Cutpointlist.size() % 2 != 0) {
+			listErrorCover--;
+		}
+		Vertex2d vert = *vertices;
 		//we draw out the lines between our cutpoint pairs
-		for (int i = 0; i < Cutpointlist.size(); i += 2) {
+		for (int i = 0; i < listErrorCover; i += 2) {
 			Vertex2d vert1;
 			Vertex2d vert2;
 			vert1.colour = vert.colour;
@@ -505,7 +509,7 @@ void Rasterizer::ScanlineInterpolatedFillPolygon2D(const Vertex2d * vertices, in
 		nedge.m = (float)((vertices + i + 1)->position[1] - (vertices + i)->position[1]) / (float)((vertices + i + 1)->position[0] - (vertices + i)->position[0]);//DY / DX
 		GlobalEdge.push_back(nedge);
 
-	}	
+	}
 	//join the last vertex to the first one
 	int lasti = count - 1;
 	ColorEdge nedge;
@@ -614,7 +618,7 @@ void Rasterizer::ScanlineInterpolatedFillPolygon2D(const Vertex2d * vertices, in
 			//draw our hoizontal line LERPing colour across it
 			for (int x = p0.pos_x; x <= p1.pos_x; x++) {
 				Colour4 color;
-			
+
 				if (mFillMode == FillMode::INTERPOLATED_FILLED) {
 					float deltax = (float)p1.pos_x - (float)p0.pos_x;
 					float t = (float)(x - p0.pos_x) / (float)deltax;
@@ -624,7 +628,7 @@ void Rasterizer::ScanlineInterpolatedFillPolygon2D(const Vertex2d * vertices, in
 				DrawPoint2D(x, scanline);
 			}
 		}
-	}	
+	}
 	//TODO:
 	//Ex 2.4 Implement Rasterizer::ScanlineInterpolatedFillPolygon2D method so that it is capable of performing interpolated filling.
 	//Note: mFillMode is set to INTERPOLATED_FILL
@@ -632,7 +636,7 @@ void Rasterizer::ScanlineInterpolatedFillPolygon2D(const Vertex2d * vertices, in
 	//Use Test 7 to test your solution
 }
 // this function checks if a point is within a circle
-int inline inCircleN(int x, int y, float radius, Vector2 origin) { 
+int inline inCircleN(int x, int y, float radius, Vector2 origin) {
 	int dx = (int)abs(x - origin[0]);
 	int dy = (int)abs(y - origin[1]);
 	return (dx * dx + dy * dy <= radius*radius);
@@ -665,7 +669,7 @@ void Rasterizer::DrawCircle2D(const Circle2D & inCircle, bool filled)
 		//generate vertexs for our circle
 		std::vector<Vertex2d> verts;//list of generated vertexes
 		float r = inCircle.radius;
-		int nsegment = (int)(inCircle.radius * 50);
+		int nsegment = (int)(inCircle.radius * 25);
 		float t = 0;
 		float dt = 2.0f * (float)PI / nsegment;
 		while (t < 2 * PI)
@@ -680,7 +684,7 @@ void Rasterizer::DrawCircle2D(const Circle2D & inCircle, bool filled)
 		//we draw out our polygon
 		DrawUnfilledPolygon2D(a, (int)verts.size());
 	}
-	else 
+	else
 	{
 		BoundaryDrawFilledCircle2D(inCircle);
 	}

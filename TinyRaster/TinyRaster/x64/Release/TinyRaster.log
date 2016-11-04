@@ -1,4 +1,7 @@
 ﻿  Rasterizer.cpp
+Rasterizer.cpp(438): warning C4244: 'initializing': conversion from 'int' to 'float', possible loss of data
+Rasterizer.cpp(439): warning C4244: 'initializing': conversion from 'int' to 'float', possible loss of data
+Rasterizer.cpp(456): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
   Generating code
   66 of 570 functions (11.6%) were compiled, the rest were copied from previous compilation.
     0 functions were new in current compilation
