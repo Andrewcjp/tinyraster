@@ -20,9 +20,7 @@ namespace AssignmentTests {
 		rasterizer->SetFillMode(Rasterizer::SOLID_FILLED);
 
 		for (int i = 0; i < vertex_count; i += 2)
-		{
-			rasterizer->SetClipRectangle(110, 550, 110, 550);
-
+		{			
 			rasterizer->DrawLine2D(*(lines + i), *(lines + i + 1));
 		}
 	}
@@ -109,14 +107,5 @@ namespace AssignmentTests {
 			rasterizer->DrawCircle2D(*(circles + i), i % 2 ? true : false);
 		}
 	}
-	void AssignmentTest09(Rasterizer * rasterizer)
-	{
-		rasterizer->SetGeometryMode(Rasterizer::POLYGON);
-		rasterizer->SetFillMode(Rasterizer::TEXTURED);
-
-		rasterizer->ScanlineInterpolatedFillPolygon2D(grad_rectangle, 4);
-		rasterizer->ScanlineInterpolatedFillPolygon2D(grad_triangle, 3);
-		rasterizer->ScanlineInterpolatedFillPolygon2D(grad_square, 4);
-		rasterizer->ScanlineInterpolatedFillPolygon2D(grad_pentagon, 5);
-	}
+	
 }

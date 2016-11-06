@@ -114,6 +114,7 @@ Colour4 Rasterizer::GetColourAtPoint(int x, int y) {
 			return pixel[y*mWidth + x];
 		}
 	}
+	return PixelRGBA(0, 0, 0, 0);
 }
 Rasterizer::Rasterizer(int width, int height)
 {
@@ -187,8 +188,8 @@ void Rasterizer::DrawLine2D(const Vertex2d & v1, const Vertex2d & v2, int thickn
 	//calculate wether our line is very steep
 	const bool Swap_xy = (abs(pt2[1] - pt1[1]) > abs(pt2[0] - pt1[0]));//dy > dx
 	bool Swap_verts = pt1[0] > pt2[0];
-	Colour4	 Vert1col = GetColor((int)v1.position[0], (int)v1.position[1], v1);
-	Colour4	 Vert2col = GetColor((int)v2.position[0], (int)v2.position[1], v2);
+	Colour4	 Vert1col = GetColor((int)pt1[0], (int)pt1[1], v1);
+	Colour4	 Vert2col = GetColor((int)pt2[0], (int)pt2[1], v2);
 	if (Swap_xy)
 	{
 		std::swap(pt1[0], pt1[1]);
@@ -236,10 +237,10 @@ void Rasterizer::DrawLine2D(const Vertex2d & v1, const Vertex2d & v2, int thickn
 		if (Swap_xy)
 		{
 			DrawPoint2D(y, curx);
-			int thicknessi = 0;
+			int thicknessi = 1;
 			bool plus = false;
 			bool minus = false;
-			for (int i = 0; i < thickness - 1; i++) {
+			for (int i = 0; i < thickness-1; i++) {
 				if (plus == false) {
 					plus = true;
 					DrawPoint2D(y + thicknessi, curx);
@@ -251,7 +252,7 @@ void Rasterizer::DrawLine2D(const Vertex2d & v1, const Vertex2d & v2, int thickn
 				if (minus == true && plus == true) {
 					if (thicknessi < thickness) {
 						thicknessi++;
-					}
+					} 
 					plus = false;
 					minus = false;
 				}
@@ -260,7 +261,7 @@ void Rasterizer::DrawLine2D(const Vertex2d & v1, const Vertex2d & v2, int thickn
 		else
 		{
 			DrawPoint2D(curx, y);
-			int thicknessi = 0;
+			int thicknessi = 1;
 			bool plus = false;
 			bool minus = false;
 			for (int i = 0; i < thickness - 1; i++) {
@@ -435,8 +436,8 @@ void Rasterizer::ScanlineFillPolygon2D(const Vertex2d * vertices, int count)
 		for (int l = 0; l < Cutpointlist.size(); l++) {
 			for (int k = 0; k < Cutpointlist.size(); k++) {
 				if (k != l && Cutpointlist[k] == Cutpointlist[l]) {
-					float t = Cutpointlist[k];
-					float t2 = Cutpointlist[l];
+					int t = Cutpointlist[k];
+					int t2 = Cutpointlist[l];
 					Cutpointlist.erase(std::remove(Cutpointlist.begin(), Cutpointlist.end(), Cutpointlist[k]), Cutpointlist.end());
 				}
 			}
@@ -453,7 +454,7 @@ void Rasterizer::ScanlineFillPolygon2D(const Vertex2d * vertices, int count)
 				}
 			}
 		}
-		int listErrorCover = Cutpointlist.size();
+		size_t listErrorCover = Cutpointlist.size();
 		// the cupoint list only has even pairs in it
 		if (Cutpointlist.size() % 2 != 0) {
 			listErrorCover--;
@@ -461,13 +462,13 @@ void Rasterizer::ScanlineFillPolygon2D(const Vertex2d * vertices, int count)
 		Vertex2d vert = *vertices;
 		//we draw out the lines between our cutpoint pairs
 		for (int i = 0; i < listErrorCover; i += 2) {
-			Vertex2d vert1;
-			Vertex2d vert2;
-			vert1.colour = vert.colour;
-			vert2.colour = vert.colour;
-			vert1.position = Vector2((float)Cutpointlist[i], (float)scanline);
-			vert2.position = Vector2((float)Cutpointlist[i + 1], (float)scanline);
-			DrawLine2D(vert1, vert2);
+			int p0 = Cutpointlist[i];
+			int p1 = Cutpointlist[i + 1];
+			//draw our hoizontal line 
+			for (int x = p0; x <= p1; x++) {
+				SetFGColour(GetColor(x,scanline,vert));
+				DrawPoint2D(x, scanline);
+			}
 		}
 	}
 	//Ex 2.3 Extend Rasterizer::ScanlineFillPolygon2D method so that it is capable of alpha blending, i.e. draw translucent polygons.

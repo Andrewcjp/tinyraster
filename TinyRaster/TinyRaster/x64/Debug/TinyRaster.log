@@ -1,1 +1,10 @@
-﻿
+﻿  Rasterizer.cpp
+  AssignmentTests.cpp
+  AppWindow.cpp
+c:\users\aandr\dropbox\uni\year2\repo\tinyraster\tinyraster\appwindow.cpp(159): warning C4305: 'argument': truncation from 'double' to 'float'
+c:\users\aandr\dropbox\uni\year2\repo\tinyraster\tinyraster\appwindow.cpp(188): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+c:\users\aandr\dropbox\uni\year2\repo\tinyraster\tinyraster\appwindow.cpp(243): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+c:\users\aandr\dropbox\uni\year2\repo\tinyraster\tinyraster\appwindow.cpp(278): warning C4305: 'argument': truncation from 'double' to 'float'
+  Generating Code...
+c:\users\aandr\dropbox\uni\year2\repo\tinyraster\tinyraster\rasterizer.cpp(117): warning C4715: 'Rasterizer::GetColourAtPoint': not all control paths return a value
+  TinyRaster.vcxproj -> C:\Users\AANdr\Dropbox\UNI\Year2\repo\TinyRaster\x64\Debug\TinyRaster.exe

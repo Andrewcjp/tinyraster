@@ -273,9 +273,6 @@ BOOL AppWindow::KeyUp(WPARAM key)
 	case VK_F8:
 		SetCurrentTestCase(TEST8);
 		break;
-	case VK_F9:
-		SetCurrentTestCase(TEST9);
-		break;
 	}
 
 	mRasterizer->Clear(Colour4(0.1, 0.1, 0.1, 1.0));
