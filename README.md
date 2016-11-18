@@ -13,5 +13,6 @@ colour interpolation
 
 Framework was provided most work was done in Rasteriser.cpp
 
-Framework Copyright © 2016  Minsi Chen
+Framework Copyright © 2016 Minsi Chen
+
 E-mail: m.chen@derby.ac.uk
